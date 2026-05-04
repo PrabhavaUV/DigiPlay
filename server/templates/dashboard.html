@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DigiPlay Admin - Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="brand">
+            <span class="brand-icon">✦</span> DigiPlay
+        </div>
+        <div class="nav-links">
+            <a href="/dashboard" class="active">Dashboard</a>
+            <a href="/devices">Devices</a>
+            <a href="/requests">Requests</a>
+            <a href="/login" style="color: var(--danger);">Logout</a>
+        </div>
+    </nav>
+    <main class="container">
+        <h1>Dashboard Overview</h1>
+        <p class="subtitle">Welcome back, Admin. Here is your system hardware snapshot.</p>
+        
+        <div class="stat-grid">
+            <div class="stat-card">
+                <div class="stat-value">{{ device_count }}</div>
+                <div class="stat-label">Total Devices</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" style="color: var(--success); text-shadow: 0 0 15px rgba(16,185,129,0.5);">{{ online_count }}</div>
+                <div class="stat-label">Online Now</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" style="color: var(--warning); text-shadow: 0 0 15px rgba(245,158,11,0.5);">{{ pending_requests.length }}</div>
+                <div class="stat-label">Action Pending</div>
+            </div>
+        </div>
+
+        <div style="margin-top: 3rem;">
+            <h3 style="margin-bottom: 1.5rem;">Direct Actions: Pending Content Approvals</h3>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Target Device</th>
+                        <th>Mobile Requester</th>
+                        <th>Proposed Content</th>
+                        <th style="text-align: center;">Controls</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for req in pending_requests %}
+                    <tr>
+                        <td style="font-family: monospace; color: var(--accent);">{{ req.device.name }}</td>
+                        <td style="font-weight: 600;">{{ req.requested_by }}</td>
+                        <td><em style="font-size: 1.1rem; color: var(--text-primary);">"{{ req.new_content }}"</em></td>
+                        <td>
+                            <div style="display: flex; gap: 0.5rem; justify-content: center;">
+                                <form action="/api/admin/requests/{{ req.id }}/approve" method="POST">
+                                    <button class="btn btn-success" type="submit">Approve</button>
+                                </form>
+                                <form action="/api/admin/requests/{{ req.id }}/reject" method="POST">
+                                    <button class="btn btn-danger" type="submit">Reject</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="4" style="text-align:center; padding: 3rem; color: var(--text-secondary);">No pending update requests in queue!</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </main>
+</body>
+</html>

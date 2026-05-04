@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DigiPlay Admin - Devices</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="brand">
+            <span class="brand-icon">✦</span> DigiPlay
+        </div>
+        <div class="nav-links">
+            <a href="/dashboard">Dashboard</a>
+            <a href="/devices" class="active">Devices</a>
+            <a href="/requests">Requests</a>
+            <a href="/login" style="color: var(--danger);">Logout</a>
+        </div>
+    </nav>
+    <main class="container">
+        <h1>Device Fleet</h1>
+        <p class="subtitle">Deploy new displays and monitor hardware status across your network.</p>
+        
+        <div class="form-card" style="margin-bottom: 2rem;">
+            <h3 style="margin-bottom: 1rem;">Deploy New Hardware</h3>
+            <form action="/devices/new" method="POST" style="display: flex; gap: 1rem; align-items: flex-end;">
+                <div class="form-group" style="margin-bottom: 0; flex: 1;">
+                    <label>Assigned Name</label>
+                    <input type="text" name="name" class="form-control" required placeholder="e.g. Master Display">
+                </div>
+                <div class="form-group" style="margin-bottom: 0; flex: 2;">
+                    <label>Description / Location</label>
+                    <input type="text" name="description" class="form-control" placeholder="Optional details">
+                </div>
+                <button type="submit" class="btn btn-primary" style="white-space: nowrap;">+ Generate Credentials</button>
+            </form>
+        </div>
+
+        {% if raw_token %}
+        <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid var(--success); border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem; border-left: 4px solid var(--success);">
+            <h3 style="color: var(--success); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>✓</span> Credentials Generated Successfully
+            </h3>
+            <p style="color: var(--text-secondary); margin-bottom: 1rem;">DO NOT REFRESH. Copy these keys directly into your ESP32 Arduino code.</p>
+            <div style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 8px; font-family: monospace; font-size: 1.1rem; color: var(--text-primary);">
+                <div style="margin-bottom: 0.5rem;"><span style="color: var(--text-secondary);">DEVICE_ID:____</span> {{ new_device_id }}</div>
+                <div><span style="color: var(--text-secondary);">DEVICE_TOKEN:_</span> {{ raw_token }}</div>
+            </div>
+        </div>
+        {% endif %}
+
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Hardware ID</th>
+                    <th>Name / Location</th>
+                    <th>Current Display</th>
+                    <th>Quick Push Update</th>
+                    <th>Network Status</th>
+                    <th>Danger Zone</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for device in devices %}
+                <tr>
+                    <td style="font-family: monospace; color: var(--accent); font-size: 1.1rem;">{{ device.id }}</td>
+                    <td>
+                        <div style="font-weight: 600; font-size: 1.05rem;">{{ device.name }}</div>
+                        <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.3rem;">{{ device.description }}</div>
+                    </td>
+                    <td style="color: var(--primary); font-weight: 600; font-style: italic;">"{{ device.current_content }}"</td>
+                    <td style="min-width: 300px;">
+                        <form action="/devices/push" method="POST" style="display: flex; gap: 0.5rem; align-items: center;">
+                            <input type="hidden" name="deviceId" value="{{ device.id }}">
+                            <input type="text" name="content" required placeholder="Type something..." class="form-control" style="padding: 0.5rem; font-size: 0.9rem;">
+                            <button type="submit" class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.85rem;">Push Update</button>
+                        </form>
+                    </td>
+                    <td>
+                        {% if device.is_online %}
+                            <span class="badge badge-online">🟢 Online</span>
+                        {% else %}
+                            <span class="badge badge-offline">🔴 Offline</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <form action="/devices/delete" method="POST" onsubmit="return confirm('Broski, are you sure? This will permanently delete this device.')">
+                            <input type="hidden" name="deviceId" value="{{ device.id }}">
+                            <button type="submit" class="btn btn-danger" style="padding: 0.5rem 1rem; font-size: 0.85rem;">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="6" style="text-align:center; padding: 3rem; color: var(--text-secondary);">No devices are currently registered to the server.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </main>
+</body>
+</html>

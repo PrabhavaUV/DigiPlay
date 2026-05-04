@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DigiPlay Admin - Requests</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="brand">
+            <span class="brand-icon">✦</span> DigiPlay
+        </div>
+        <div class="nav-links">
+            <a href="/dashboard">Dashboard</a>
+            <a href="/devices">Devices</a>
+            <a href="/requests" class="active">Requests</a>
+            <a href="/login" style="color: var(--danger);">Logout</a>
+        </div>
+    </nav>
+    <main class="container">
+        <h1>Historical Logs</h1>
+        <p class="subtitle">Complete audit trail of all mobile updates submitted via API.</p>
+        
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Log ID</th>
+                    <th>Target Device</th>
+                    <th>Mobile Requester</th>
+                    <th>Content Proposal</th>
+                    <th>Final Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for req in requests %}
+                <tr>
+                    <td style="font-family: monospace; color: var(--text-secondary);">#{{ req.id }}</td>
+                    <td style="font-weight: 600;">{{ req.device.name }}</td>
+                    <td style="color: var(--accent);">{{ req.requested_by }}</td>
+                    <td><strong style="color: var(--text-primary);">"{{ req.new_content }}"</strong></td>
+                    <td>
+                        {% if req.status == 'APPROVED' %}
+                            <span class="badge badge-online">Approved</span>
+                        {% elif req.status == 'REJECTED' %}
+                            <span class="badge badge-offline">Rejected</span>
+                        {% else %}
+                            <span class="badge badge-pending">Pending Review</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="5" style="text-align:center; padding: 3rem; color: var(--text-secondary);">The audit log is completely empty.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </main>
+</body>
+</html>

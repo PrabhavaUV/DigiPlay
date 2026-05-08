@@ -92,7 +92,7 @@ curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
 sudo apt install -y nodejs git
 
 # Verify installation
-node -v && npm -v
+    node -v && npm -v
 ```
 
 ### 5.3 Deploy Codebase

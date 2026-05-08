@@ -13,13 +13,13 @@
 #include <Preferences.h>
 
 // ─── CONFIGURATION ───────────────────────────────────────────
-const char* MQTT_BROKER = "172.17.10.193"; // User specified IP
+const char* MQTT_BROKER = "52.62.31.60"; // User specified IP
 const int   MQTT_PORT   = 1883;
-const char* DEVICE_ID   = "DP001";       // User specified ID
+const char* DEVICE_ID   = "DP002";       // User specified ID
 
 // WiFi Credentials (User specified)
-const char* WIFI_SSID   = "Airtel_VPBHPBPN";
-const char* WIFI_PASS   = "your_password_here"; // Replace with actual password
+const char* WIFI_SSID   = "Abcd1234";
+const char* WIFI_PASS   = "Abcd1234"; // Replace with actual password
 
 // ─── HARDWARE PINS ───────────────────────────────────────────
 
